@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="Movies">
+	<select id="getAdmin" parameterType="String" resultType="movie.AdminDataBean">
+		select * from admin where adminId=#{adminId}
+	</select>
+
+	<select id="checkAdmin" parameterType="String" resultType="int">
+		select count(*) from admin
+	</select>
+	
+	<select id="getMovies" parameterType="java.util.Map" resultType="movie.MovieDataBean">
+		select movieCd,movieNm,movieNmEn,prdtYear,openDt,typeNm,prdtStatNm,nationAlt,genreAlt,repNationNm,repGenreNm,
+							directorNms,directorNmEns,companyNms,companyNmEns,companyPartNms,moviePosterDir,moviePosterOriName,moviePosterSysName,r 
+			from (select movieCd,movieNm,movieNmEn,prdtYear,openDt,typeNm,prdtStatNm,nationAlt,genreAlt,repNationNm,repGenreNm,
+							directorNms,directorNmEns,companyNms,companyNmEns,companyPartNms,moviePosterDir,moviePosterOriName,moviePosterSysName,@rownum := @rownum+1 as r
+			from (select movieCd,movieNm,movieNmEn,prdtYear,openDt,typeNm,prdtStatNm,nationAlt,genreAlt,repNationNm,repGenreNm,
+							directorNms,directorNmEns,companyNms,companyNmEns,companyPartNms,moviePosterDir,moviePosterOriName,moviePosterSysName,@rownum := 0 from movie)
+			sub2 order by openDt desc) sub1
+			where r &gt;= #{start} and r &lt;= #{end}
+	</select>
+	
+	<select id="getMovieCount" resultType="int">
+		select count(*) from movie
+	</select>
+	
+	<select id="getMovieInfoCount" resultType="int">
+		select count(*) from movieInfo where movieCd=#{movieCd}
+	</select>
+	
+	<select id="getMovieCds" resultType="movie.MovieDataBean">
+		select movieCd from movie
+	</select>
+
+	<select id="getMovie" parameterType="String" resultType="movie.MovieDataBean">
+		select * from movie where movieCd=#{movieCd}
+	</select>
+	
+	<select id="getMovieInfo" parameterType="String" resultType="movie.MovieInfoDataBean">
+		select * from movieInfo where movieCd=#{movieCd}
+	</select>
+	
+	<insert id="insertMovie" parameterType="movie.MovieDataBean">
+		insert into movie(movieCd,movieNm,movieNmEn,prdtYear,openDt,typeNm,prdtStatNm,nationAlt,genreAlt,repNationNm,repGenreNm,
+							directorNms,directorNmEns,companyNms,companyNmEns,companyPartNms,moviePosterDir,moviePosterOriName,moviePosterSysName)
+		values(#{movieCd},#{movieNm},#{movieNmEn},#{prdtYear},#{openDt},#{typeNm},#{prdtStatNm},#{nationAlt},#{genreAlt},#{repNationNm},#{repGenreNm},
+				#{directorNms},#{directorNmEns},#{companyNms},#{companyNmEns},#{companyPartNms},#{moviePosterDir},#{moviePosterOriName},#{moviePosterSysName})
+	</insert>
+	
+	<insert id="insertMovieInfo" parameterType="movie.MovieInfoDataBean">
+		insert into movieInfo(movieCd,movieNm,movieNmEn,movieNmOg,prdtYear,showTm,openDt,typeNm,prdtStatNm,nations,genres,directorNms,directorNmEns,actorNms,actorNmEns,
+							castNms,castNmEns,showTypeGroupNms,showTypeNms,auditNos,watchGradeNms,companyNms,companyNmEns,companyPartNms,staffNms,staffNmEns,staffRoleNms)
+		values(#{movieCd},#{movieNm},#{movieNmEn},#{movieNmOg},#{prdtYear},#{showTm},#{openDt},#{typeNm},#{prdtStatNm},#{nations},#{genres},
+				#{directorNms},#{directorNmEns},#{actorNms},#{actorNmEns},#{castNms},#{castNmEns},#{showTypeGroupNms},#{showTypeNms},
+				#{auditNos},#{watchGradeNms},#{companyNms},#{companyNmEns},#{companyPartNms},#{staffNms},#{staffNmEns},#{staffRoleNms})
+	</insert>
+	
+	<update id="updateMovie" parameterType="movie.MovieDataBean">
+		update movie set movieNm=#{movieNm},movieNmEn=#{movieNmEn},prdtYear=#{prdtYear},openDt=#{openDt},typeNm=#{typeNm},prdtStatNm=#{prdtStatNm},
+		nationAlt=#{nationAlt},genreAlt=#{genreAlt},repNationNm=#{repNationNm},repGenreNm=#{repGenreNm},directorNms=#{directorNms},directorNmEns=#{directorNmEns},
+		companyNms=#{companyNms},companyNmEns=#{companyNmEns},companyPartNms=#{companyPartNms},
+		moviePosterDir=#{moviePosterDir},moviePosterOriName=#{moviePosterOriName},moviePosterSysName=#{moviePosterSysName} where movieCd=#{movieCd}
+	</update>
+	
+	<update id="updateMovieInfo" parameterType="movie.MovieInfoDataBean">
+		update movieInfo set movieNm=#{movieNm},movieNmEn=#{movieNmEn},movieNmOg=#{movieNmOg},prdtYear=#{prdtYear},showTm=#{showTm},openDt=#{openDt},typeNm=#{typeNm},
+		prdtStatNm=#{prdtStatNm},nations=#{nations},genres=#{genres},directorNms=#{directorNms},directorNmEns=#{directorNmEns},actorNms=#{actorNms},actorNmEns=#{actorNmEns},
+		castNms=#{castNms},castNmEns=#{castNmEns},showTypeGroupNms=#{showTypeGroupNms},showTypeNms=#{showTypeNms},auditNos=#{auditNos},watchGradeNms=#{watchGradeNms},
+		companyNms=#{companyNms},companyNmEns=#{companyNmEns},companyPartNms=#{companyPartNms},staffNms=#{staffNms},staffNmEns=#{staffNmEns},staffRoleNms=#{staffRoleNms}
+		where movieCd=#{movieCd}
+	</update>
+	
+	<delete id="deleteMovie" parameterType="String">
+		delete from movie where movieCd=#{movieCd}
+	</delete>
+</mapper>
